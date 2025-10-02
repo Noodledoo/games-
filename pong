@@ -1,0 +1,50 @@
+import pygame
+
+def run():
+    pygame.init()
+    WIDTH, HEIGHT = 600, 400
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    clock = pygame.time.Clock()
+
+    paddle = pygame.Rect(20, HEIGHT // 2 - 30, 10, 60)
+    ai_paddle = pygame.Rect(WIDTH - 30, HEIGHT // 2 - 30, 10, 60)
+    ball = pygame.Rect(WIDTH // 2, HEIGHT // 2, 15, 15)
+    ball_speed = [4, 4]
+
+    running = True
+    while running:
+        screen.fill((0, 0, 0))
+        pygame.draw.rect(screen, (255, 255, 255), paddle)
+        pygame.draw.rect(screen, (255, 255, 255), ai_paddle)
+        pygame.draw.ellipse(screen, (255, 255, 255), ball)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] and paddle.top > 0:
+            paddle.y -= 5
+        if keys[pygame.K_DOWN] and paddle.bottom < HEIGHT:
+            paddle.y += 5
+
+        if ai_paddle.centery < ball.centery:
+            ai_paddle.y += 4
+        else:
+            ai_paddle.y -= 4
+
+        ball.x += ball_speed[0]
+        ball.y += ball_speed[1]
+
+        if ball.top <= 0 or ball.bottom >= HEIGHT:
+            ball_speed[1] *= -1
+
+        if ball.colliderect(paddle) or ball.colliderect(ai_paddle):
+            ball_speed[0] *= -1
+
+        if ball.left < 0 or ball.right > WIDTH:
+            ball.x, ball.y = WIDTH // 2, HEIGHT // 2
+
+        pygame.display.flip()
+        clock.tick(60)
+    pygame.quit()
