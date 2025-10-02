@@ -1,0 +1,52 @@
+import pygame
+import random
+
+def run():
+    pygame.init()
+    WIDTH, HEIGHT = 600, 400
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    clock = pygame.time.Clock()
+    block = 20
+    snake = [(100, 100)]
+    direction = (block, 0)
+    food = (random.randint(0, WIDTH // block - 1) * block,
+            random.randint(0, HEIGHT // block - 1) * block)
+
+    def draw_snake():
+        for s in snake:
+            pygame.draw.rect(screen, (0, 255, 0), (*s, block, block))
+
+    def draw_food():
+        pygame.draw.rect(screen, (255, 0, 0), (*food, block, block))
+
+    running = True
+    while running:
+        screen.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and direction != (0, block):
+                    direction = (0, -block)
+                elif event.key == pygame.K_DOWN and direction != (0, -block):
+                    direction = (0, block)
+                elif event.key == pygame.K_LEFT and direction != (block, 0):
+                    direction = (-block, 0)
+                elif event.key == pygame.K_RIGHT and direction != (-block, 0):
+                    direction = (block, 0)
+
+        head = (snake[0][0] + direction[0], snake[0][1] + direction[1])
+        if head in snake or not (0 <= head[0] < WIDTH and 0 <= head[1] < HEIGHT):
+            break
+        snake.insert(0, head)
+        if head == food:
+            food = (random.randint(0, WIDTH // block - 1) * block,
+                    random.randint(0, HEIGHT // block - 1) * block)
+        else:
+            snake.pop()
+
+        draw_snake()
+        draw_food()
+        pygame.display.flip()
+        clock.tick(10)
+    pygame.quit()
