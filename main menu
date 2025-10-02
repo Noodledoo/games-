@@ -1,0 +1,42 @@
+import pygame
+import sys
+from games import snake, pong, space_invaders
+
+pygame.init()
+WIDTH, HEIGHT = 600, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Game Menu")
+FONT = pygame.font.SysFont("Arial", 36)
+
+buttons = [
+    {"label": "Play Snake", "function": snake.run},
+    {"label": "Play Pong", "function": pong.run},
+    {"label": "Play Space Invaders", "function": space_invaders.run},
+    {"label": "Quit", "function": sys.exit},
+]
+
+def draw_menu():
+    screen.fill((30, 30, 30))
+    for i, button in enumerate(buttons):
+        text = FONT.render(button["label"], True, (255, 255, 255))
+        rect = text.get_rect(center=(WIDTH // 2, 100 + i * 60))
+        screen.blit(text, rect)
+        button["rect"] = rect
+    pygame.display.flip()
+
+def main():
+    clock = pygame.time.Clock()
+    while True:
+        draw_menu()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        button["function"]()
+        clock.tick(60)
+
+if __name__ == "__main__":
+    main()
