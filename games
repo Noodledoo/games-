@@ -1,0 +1,12 @@
+game-hub/
+│
+├── games/
+│   ├── snake.py
+│   ├── pong.py
+│   └── space_invaders.py
+│
+├── main.py         ← Entry point with the main menu
+├── utils.py        ← (Optional) shared functions
+├── assets/         ← (Optional) images/sounds/fonts
+├── requirements.txt
+└── README.md
