@@ -1,0 +1,47 @@
+import pygame
+
+def run():
+    pygame.init()
+    WIDTH, HEIGHT = 600, 400
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    clock = pygame.time.Clock()
+
+    player = pygame.Rect(WIDTH // 2 - 25, HEIGHT - 30, 50, 10)
+    bullets = []
+    enemies = [pygame.Rect(x * 60 + 30, 50, 40, 20) for x in range(8)]
+
+    running = True
+    while running:
+        screen.fill((0, 0, 0))
+        pygame.draw.rect(screen, (0, 255, 0), player)
+        for bullet in bullets:
+            pygame.draw.rect(screen, (255, 255, 0), bullet)
+        for enemy in enemies:
+            pygame.draw.rect(screen, (255, 0, 0), enemy)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and player.left > 0:
+            player.x -= 5
+        if keys[pygame.K_RIGHT] and player.right < WIDTH:
+            player.x += 5
+        if keys[pygame.K_SPACE] and len(bullets) < 5:
+            bullets.append(pygame.Rect(player.centerx - 2, player.top, 4, 10))
+
+        for bullet in bullets[:]:
+            bullet.y -= 6
+            if bullet.bottom < 0:
+                bullets.remove(bullet)
+            else:
+                for enemy in enemies[:]:
+                    if bullet.colliderect(enemy):
+                        enemies.remove(enemy)
+                        bullets.remove(bullet)
+                        break
+
+        pygame.display.flip()
+        clock.tick(60)
+    pygame.quit()
